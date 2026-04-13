@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a3c2e" />
+  <title>Ouderproof</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#f5f3ee;font-family:Georgia,serif;max-width:430px;margin:0 auto;min-height:100vh}
+    .header{background:#1a3c2e;padding:16px 14px;display:flex;justify-content:space-between;align-items:center}
+    .logo{width:34px;height:34px;border-radius:9px;background:#52b788;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .title{margin:0;font-size:22px;font-weight:bold;color:white;letter-spacing:-0.5px}
+    .sub{margin:2px 0 0;font-size:10px;color:rgba(255,255,255,0.65)}
+    .gear{background:rgba(255,255,255,0.1);border:none;border-radius:20px;padding:5px 9px;color:white;cursor:pointer;font-size:14px}
+    .search-wrap{padding:10px 14px 4px}
+    .search{width:100%;padding:9px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:13px;font-family:inherit;background:white;outline:none}
+    .pills{display:flex;gap:6px;padding:6px 14px 2px;overflow-x:auto;scrollbar-width:none}
+    .pill{padding:6px 11px;border-radius:20px;border:1.5px solid #ddd;background:white;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+    .pill.on{font-weight:bold}
+    .bar{display:flex;justify-content:space-between;align-items:center;padding:0 14px 6px;gap:6px}
+    .tab{padding:5px 10px;border:none;border-radius:20px;background:transparent;font-size:12px;cursor:pointer;font-family:inherit;color:#888}
+    .tab.on{background:#1a3c2e;color:white;font-weight:bold}
+    .badge{background:#e76f51;color:white;border-radius:10px;padding:1px 5px;font-size:10px}
+    .smbtn{padding:5px 10px;border-radius:20px;border:1.5px solid #ddd;background:white;font-size:11px;cursor:pointer;font-family:inherit;color:#555}
+    .smbtn.on{border-color:#2d6a4f;background:#e8f5e9;color:#2d6a4f}
+    select{padding:5px 6px;border-radius:20px;border:1.5px solid #ddd;background:white;font-size:11px;font-family:inherit;color:#555;cursor:pointer}
+    .panel{background:white;margin:0 14px 6px;border-radius:14px;padding:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07)}
+    .plabel{font-size:10px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px;display:block}
+    .chips{display:flex;flex-wrap:wrap;gap:5px}
+    .chip{padding:5px 10px;border-radius:20px;border:1.5px solid #ddd;background:#f9f9f9;font-size:12px;cursor:pointer;font-family:inherit;color:#555}
+    .chip.on{border-color:#2d6a4f;background:#e8f5e9;color:#2d6a4f;font-weight:bold}
+    .clearBtn{margin-top:8px;background:none;border:none;color:#e76f51;font-size:12px;cursor:pointer;padding:0;font-family:inherit;text-decoration:underline}
+    .count{font-size:11px;color:#aaa;padding:0 16px 2px;margin:0}
+    .list{padding:0 14px}
+    .card{display:flex;align-items:center;background:white;border-radius:14px;padding:10px 11px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,0.07);gap:9px}
+    .thumb{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:26px}
+    .cbody{flex:1;min-width:0}
+    .cname{font-weight:bold;font-size:13px;color:#1a1a1a}
+    .optag{font-size:9px;background:#d1fae5;color:#065f46;border-radius:7px;padding:2px 5px;font-weight:bold;white-space:nowrap;margin-left:4px}
+    .ccity{font-size:11px;color:#888;margin:1px 0 3px}
+    .opicons{display:flex;gap:2px;margin-bottom:4px;font-size:12px}
+    .tags{display:flex;flex-wrap:wrap;gap:4px}
+    .btag{font-size:10px;border-radius:10px;padding:2px 6px;font-weight:600;color:#333}
+    .stag{font-size:10px;border-radius:10px;padding:2px 6px;color:#333}
+    .favbtn{background:none;border:none;font-size:18px;cursor:pointer;flex-shrink:0;padding:2px}
+    .empty{text-align:center;padding:36px 20px}
+    .addbtns{padding:8px 14px 0;display:flex;gap:8px}
+    .addbtn{flex:1;padding:12px;border-radius:20px;border:2px dashed #2d6a4f;background:transparent;color:#2d6a4f;font-size:12px;font-weight:bold;cursor:pointer;font-family:inherit}
+    .bizbtn{flex:1;padding:12px;border-radius:20px;border:2px solid #b45309;background:#fffbeb;color:#92400e;font-size:12px;font-weight:bold;cursor:pointer;font-family:inherit}
+    /* Detail */
+    .screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f5f3ee;overflow-y:auto;z-index:100;max-width:430px;margin:0 auto;font-family:Georgia,serif}
+    .dheader{background:#1a3c2e;padding:16px 14px;display:flex;justify-content:space-between;align-items:center}
+    .backbtn{background:none;border:none;color:white;font-size:14px;cursor:pointer;font-family:inherit}
+    .hero{padding:28px 16px 20px;text-align:center}
+    .hero h2{color:white;margin:8px 0 4px;font-size:21px}
+    .hero p{color:rgba(255,255,255,0.75);margin:0 0 8px;font-size:13px}
+    .opcard{background:linear-gradient(135deg,#ecfdf5,#f0fdf4);border:1.5px solid #6ee7b7;border-radius:14px;padding:12px;margin-bottom:6px}
+    .opcard-title{font-weight:bold;color:#065f46;margin:0 0 4px;font-size:13px}
+    .opgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+    .opitem{display:flex;align-items:center;gap:6px;border-radius:10px;padding:7px 9px}
+    .dbody{padding:16px 18px}
+    .desc{font-size:15px;color:#444;line-height:1.7;margin:14px 0}
+    .slabel{font-size:10px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 5px;display:block}
+    .atag{font-size:11px;background:#dbeafe;color:#1d4ed8;border-radius:10px;padding:2px 7px}
+    .pricebox{background:#fafafa;border:1px solid #eee;border-radius:14px;padding:12px;margin-top:14px}
+    /* Form screens */
+    .formscreen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f5f3ee;overflow-y:auto;z-index:200;max-width:430px;margin:0 auto;font-family:Georgia,serif}
+    .formscroll{padding:16px 16px 40px}
+    label.flabel{display:block;font-size:12px;font-weight:bold;color:#555;margin-bottom:3px;margin-top:10px}
+    input.finput,textarea.finput{width:100%;padding:9px 11px;border-radius:10px;border:1.5px solid #e0e0e0;font-size:13px;font-family:inherit;background:white;outline:none}
+    textarea.finput{resize:none}
+    .bigchip{width:100%;padding:9px 12px;border-radius:12px;border:1.5px solid #ddd;background:#f9f9f9;font-size:13px;cursor:pointer;font-family:inherit;color:#555;text-align:left;margin-bottom:6px}
+    .bigchip.on{border-color:#2d6a4f;background:#e8f5e9;color:#2d6a4f;font-weight:bold}
+    .primarybtn{background:#1a3c2e;color:white;border:none;border-radius:20px;padding:11px 20px;font-size:13px;font-weight:bold;cursor:pointer;font-family:inherit;width:100%;margin-top:16px}
+    .secbtn{background:white;color:#2d6a4f;border:1.5px solid #2d6a4f;border-radius:20px;padding:7px 0;font-size:11px;cursor:pointer;font-family:inherit;flex:1}
+    .dangerbtn{background:white;color:#e76f51;border:1.5px solid #e76f51;border-radius:20px;padding:7px 0;font-size:11px;cursor:pointer;font-family:inherit;flex:1}
+    .approvebtn{background:#1a3c2e;color:white;border:none;border-radius:20px;padding:7px 0;font-size:11px;cursor:pointer;font-family:inherit;flex:1}
+    .thanks{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f5f3ee;z-index:300;max-width:430px;margin:0 auto;display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:16px;text-align:center;font-family:Georgia,serif}
+  </style>
+</head>
+<body>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo">✅</div>
+      <div>
+        <h1 class="title">Ouderproof</h1>
+        <p class="sub" id="locSub">Kinderen spelen. Jij ontspant.</p>
+      </div>
+    </div>
+    <button class="gear" onclick="showAdmin()">⚙️</button>
+  </div>
+
+  <div class="search-wrap">
+    <input class="search" id="searchInput" placeholder="🔍 Zoek op naam, stad of provincie…" oninput="render()">
+  </div>
+
+  <div class="pills" id="pillBar"></div>
+
+  <div class="bar">
+    <div style="display:flex;gap:6px">
+      <button class="tab on" id="tabDiscover" onclick="switchTab('discover')">Ontdekken</button>
+      <button class="tab" id="tabFav" onclick="switchTab('favorites')">Favorieten</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="smbtn" id="filterBtn" onclick="toggleFilters()">Filters</button>
+      <select id="sortSel" onchange="render()">
+        <option value="name">A–Z</option>
+        <option value="distance">Dichtstbij</option>
+        <option value="ouderproof">Meest OP</option>
+        <option value="prijs">Goedkoopst</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="panel" id="filterPanel" style="display:none">
+    <span class="plabel">Budget per persoon</span>
+    <div class="chips" id="budgetChips"></div>
+    <span class="plabel" style="margin-top:10px">Leeftijd kind</span>
+    <div class="chips" id="ageChips"></div>
+    <button class="clearBtn" onclick="clearFilters()">Wis alles</button>
+  </div>
+
+  <p class="count" id="countTxt"></p>
+  <div class="list" id="placeList"></div>
+
+  <div class="addbtns">
+    <button class="addbtn" onclick="showSuggest(false)">+ Plek toevoegen</button>
+    <button class="bizbtn" onclick="showSuggest(true)">🏢 Bedrijf aanmelden</button>
+  </div>
+</div>
+
+<!-- DETAIL SCREEN -->
+<div class="screen" id="detailScreen">
+  <div class="dheader" style="justify-content:space-between">
+    <button class="backbtn" onclick="closeDetail()">← Terug</button>
+    <button id="detailFavBtn" style="background:none;border:none;font-size:24px;cursor:pointer" onclick="toggleDetailFav()">🤍</button>
+  </div>
+  <div class="hero" id="detailHero"></div>
+  <div class="dbody" id="detailBody"></div>
+</div>
+
+<!-- SUGGEST SCREEN -->
+<div class="formscreen" id="suggestScreen">
+  <div class="dheader" style="justify-content:space-between;align-items:center">
+    <button class="backbtn" onclick="closeSuggest()">← Terug</button>
+    <span style="color:white;font-weight:bold" id="suggestTitle">Plek toevoegen</span>
+    <div style="width:60px"></div>
+  </div>
+  <div id="bizBanner" style="display:none;background:#e8f5e9;padding:10px 16px">
+    <p style="margin:0;font-size:13px;color:#2d6a4f"><strong>Voor bedrijven:</strong> Gratis plaatsing na beoordeling.</p>
+  </div>
+  <div class="formscroll">
+    <div id="bizFields" style="display:none">
+      <label class="flabel">Naam contactpersoon *</label>
+      <input class="finput" id="fContactName" placeholder="Jan de Vries">
+      <label class="flabel">E-mailadres *</label>
+      <input class="finput" id="fContactEmail" placeholder="info@locatie.nl">
+      <label class="flabel">Telefoonnummer</label>
+      <input class="finput" id="fContactPhone" placeholder="06-12345678">
+    </div>
+    <label class="flabel">Naam plek *</label>
+    <input class="finput" id="fName" placeholder="bijv. Speelboerderij De Bron">
+    <label class="flabel">Stad *</label>
+    <input class="finput" id="fCity" placeholder="bijv. Hilversum">
+    <label class="flabel">Provincie</label>
+    <input class="finput" id="fProvince" placeholder="bijv. Noord-Holland">
+    <label class="flabel">Omschrijving</label>
+    <textarea class="finput" id="fDesc" rows="3" placeholder="Wat maakt deze plek bijzonder?"></textarea>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1"><label class="flabel">Emoji</label><input class="finput" id="fEmoji" value="📍"></div>
+      <div style="flex:2"><label class="flabel">Prijs v.a. (€)</label><input class="finput" id="fPrice" type="number" value="0"></div>
+    </div>
+    <label class="flabel">Prijsuitleg</label>
+    <input class="finput" id="fPriceNote" placeholder="bijv. Kind €10, ouder gratis">
+    <label class="flabel" style="margin-top:12px">Stijl</label>
+    <div class="chips" id="fStijlChips"></div>
+    <label class="flabel" style="margin-top:10px">Leeftijd</label>
+    <div class="chips" id="fAgeChips"></div>
+    <div style="margin-top:14px">
+      <button class="bigchip" id="fOpBtn" onclick="toggleFormOp()">✅ Dit is een Ouderproof plek</button>
+    </div>
+    <div id="fOpFeatures" style="display:none"></div>
+    <button class="primarybtn" onclick="submitSuggest()">Indienen →</button>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="formscreen" id="adminLoginScreen">
+  <div class="dheader" style="justify-content:space-between;align-items:center">
+    <button class="backbtn" onclick="closeAdminLogin()">← Terug</button>
+    <span style="color:white;font-weight:bold">Admin</span>
+    <div style="width:60px"></div>
+  </div>
+  <div style="padding:36px;display:flex;flex-direction:column;gap:14px;align-items:center">
+    <div style="font-size:52px">🔐</div>
+    <h2 style="margin:0;color:#1a3c2e">Ouderproof Admin</h2>
+    <input type="password" class="finput" id="adminPwInput" placeholder="Wachtwoord" style="width:100%">
+    <p style="color:#e76f51;font-size:13px;display:none" id="adminErr">Onjuist wachtwoord</p>
+    <button class="primarybtn" onclick="doAdminLogin()">Inloggen</button>
+    <p style="color:#bbb;font-size:11px">Demo: ouderproof2024</p>
+  </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div class="formscreen" id="adminScreen">
+  <div class="dheader" style="justify-content:space-between;align-items:center">
+    <button class="backbtn" onclick="closeAdmin()">← Terug</button>
+    <span style="color:white;font-weight:bold" id="adminTitle">Beheer</span>
+    <div style="width:60px"></div>
+  </div>
+  <div style="display:flex;gap:8px;padding:10px 14px 4px">
+    <button class="chip on" id="tabPending" onclick="adminTab('pending')" style="flex:1">Wachtend</button>
+    <button class="chip" id="tabApproved" onclick="adminTab('approved')" style="flex:1">Actief</button>
+  </div>
+  <div class="list" id="adminList"></div>
+</div>
+
+<!-- THANKS -->
+<div id="thanksScreen" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f5f3ee;z-index:300;max-width:430px;margin:0 auto;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:16px;text-align:center;font-family:Georgia,serif">
+  <div style="font-size:60px">🎉</div>
+  <h2 style="color:#1a3c2e;margin:0">Bedankt!</h2>
+  <p style="color:#666">Je suggestie wordt beoordeeld door de beheerder.</p>
+  <button class="primarybtn" onclick="closeThanks()">Terug naar de app</button>
+</div>
+
+<script>
+const ADMIN_PW = 'ouderproof2024';
+
+const BUDGET_TIERS = [
+  {key:'gratis',label:'Gratis',icon:'🆓',color:'#d1fae5'},
+  {key:'low',label:'€ tot 10',icon:'💚',color:'#bbf7d0'},
+  {key:'mid',label:'€ 10–20',icon:'💛',color:'#fef08a'},
+  {key:'high',label:'€ 20–35',icon:'🟠',color:'#fed7aa'},
+  {key:'premium',label:'€ 35+',icon:'🔴',color:'#fecaca'},
+];
+function bk(p){return p===0?'gratis':p<=10?'low':p<=20?'mid':p<=35?'high':'premium';}
+function getBT(p){return BUDGET_TIERS.find(t=>t.key===bk(p.priceFrom))||BUDGET_TIERS[0];}
+
+const STIJL = {
+  speelcafe:{l:'Speelcafé',i:'☕',c:'#fde68a'},
+  restaurant:{l:'Restaurant',i:'🍽️',c:'#fbcfe8'},
+  boerderij:{l:'Boerderij',i:'🐄',c:'#fed7aa'},
+  natuur:{l:'Natuur',i:'🌲',c:'#86efac'},
+  actief:{l:'Actief',i:'🤸',c:'#fca5a5'},
+  rustig:{l:'Rustig',i:'🧘',c:'#bfdbfe'},
+  dierentuin:{l:'Dierentuin',i:'🦁',c:'#e9d5ff'},
+};
+
+const AGE_OPT = ['0-2','3-5','6-9','10-12'];
+const AGE_LBL = {'0-2':'0–2 jr','3-5':'3–5 jr','6-9':'6–9 jr','10-12':'10–12 jr'};
+
+const OP_FEATURES = [
+  {key:'speelzone',label:'Veilige speelzone',icon:'🛝'},
+  {key:'zitplaatsen',label:'Zitplaatsen voor ouders',icon:'🪑'},
+  {key:'etenDrinken',label:'Eten & drinken',icon:'☕'},
+  {key:'speelzolder',label:'Speelzolder/-ruimte',icon:'🏠'},
+  {key:'rustigeSfeer',label:'Ontspannen sfeer',icon:'😌'},
+];
+
+function OP(o){return Object.assign({speelzone:true,zitplaatsen:true,etenDrinken:true,speelzolder:false,rustigeSfeer:true},o||{});}
+function NOP(o){return Object.assign({speelzone:false,zitplaatsen:true,etenDrinken:true,speelzolder:false,rustigeSfeer:false},o||{});}
+
+const SEED = [
+  {id:1,name:'Bruis',city:'Laren',province:'Noord-Holland',lat:52.2553,lng:5.2166,stijl:['speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Gratis entree, consumpties betalen',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP({speelzolder:true}),description:'Hét Ouderproof origineel. Speelzolder voor kids, jij drinkt beneden koffie. Ontspannen sfeer, geen haast.',emoji:'☕'},
+  {id:2,name:'Soesterdal',city:'Soest',province:'Utrecht',lat:52.1717,lng:5.2896,stijl:['natuur','rustig'],ages:['3-5','6-9','10-12'],priceFrom:0,priceNote:'Gratis, terras met consumpties',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Dal met speeltuin en gezellig terras. Kinderen spelen buiten, jij geniet met een drankje.',emoji:'🌿'},
+  {id:3,name:'Kunst & Kids Café',city:'Den Haag',province:'Zuid-Holland',lat:52.0705,lng:4.3007,stijl:['speelcafe','rustig'],ages:['0-2','3-5'],priceFrom:3.5,priceNote:'€3,50 per kind',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speelcafé voor 0–4 jaar. Goede koffie, speelhoekjes, muzieklesjes. Echte huiskamersfeer.',emoji:'🎨'},
+  {id:4,name:'Koffie & Kind',city:'Den Haag',province:'Zuid-Holland',lat:52.0685,lng:4.295,stijl:['speelcafe','rustig'],ages:['0-2','3-5'],priceFrom:3.5,priceNote:'€3,50 pp (baby gratis)',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Cappuccino en magazine voor jou, speelhoek met treinbaan voor de kleintjes.',emoji:'🍼'},
+  {id:5,name:"Binkies Play Café",city:'Den Haag',province:'Zuid-Holland',lat:52.0775,lng:4.32,stijl:['speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:5,priceNote:'Entree v.a. €5',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Poppenhuis, treinhoek en tuin. Gezellig café voor ouders, opvoedingsseminars.',emoji:'🏠'},
+  {id:6,name:'Speelcafé Zoet',city:'Vught',province:'Noord-Brabant',lat:51.655,lng:5.294,stijl:['speelcafe','actief'],ages:['0-2','3-5','6-9','10-12'],priceFrom:4,priceNote:'Kind €4, ouder gratis',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Buitenspeeltuin naast Eetcafé Zout. Kinderen klimmen, jij zit op het terras.',emoji:'☀️'},
+  {id:7,name:'ZieZo! Kindercafé',city:'Harderwijk',province:'Gelderland',lat:52.3417,lng:5.6233,stijl:['speelcafe','rustig'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Gratis spelen, consumpties betalen',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Kinderwinkel én speelcafé in één. Gezellige speelhoek, lunchcafé voor ouders.',emoji:'👗'},
+  {id:8,name:'Keck. Café',city:'Gouda',province:'Zuid-Holland',lat:52.0116,lng:4.7128,stijl:['speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Vrij entree, consumpties betalen',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Afgeschermde speelhoek, treinbaan, poppenhuis. Jij in een grote stoel met bagels of pancakes.',emoji:'🥯'},
+  {id:9,name:'Stenen Tijdperk',city:'Leeuwarden',province:'Friesland',lat:53.2012,lng:5.7999,stijl:['speelcafe'],ages:['3-5','6-9'],priceFrom:0,priceNote:'Vrij entree, consumpties',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'LEGO-speelcafé in huiskamerstijl. LEGO, DUPLO en Playmobil. Ouders doen rustig hun drankje.',emoji:'🧱'},
+  {id:10,name:'De Pretfabriek',city:'Woerden',province:'Utrecht',lat:52.0882,lng:4.888,stijl:['actief','speelcafe'],ages:['0-2','3-5','6-9','10-12'],priceFrom:9,priceNote:'Vanaf €9 kind, ouders gratis',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Overzichtelijke binnenspeeltuin, peuterzone, trampolines. Ouders comfortabel met koffie.',emoji:'🎡'},
+  {id:11,name:'Keck. Utrecht',city:'Utrecht',province:'Utrecht',lat:52.0907,lng:5.1214,stijl:['speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Vrij entree, consumpties',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speelhoek, goede koffie, all day breakfast. Centraal in Utrecht.',emoji:'🏙️'},
+  {id:12,name:'Het Spruit',city:'Breda',province:'Noord-Brabant',lat:51.5719,lng:4.7683,stijl:['speelcafe','rustig'],ages:['0-2','3-5'],priceFrom:0,priceNote:'Gratis spelen, eten/drinken betalen',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Restaurant voor ouders met jonge kinderen. Borstvoeding welkom, speelhoek aanwezig.',emoji:'🌱'},
+  {id:13,name:"Birdie's Play Café",city:'Den Haag',province:'Zuid-Holland',lat:52.068,lng:4.29,stijl:['speelcafe'],ages:['0-2','3-5'],priceFrom:4,priceNote:'Entree v.a. €4',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Hip interieur, wafels met vers fruit, babyccino voor de kids. Indoor speeltuin.',emoji:'🦜'},
+  {id:14,name:'Spelekids',city:'Loosdrecht',province:'Utrecht',lat:52.205,lng:5.08,stijl:['actief','speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:8,priceNote:'Entree €8 kind',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Overzichtelijke indoor speeltuin, minder druk dan de grote ketens. Goed koffiecorner.',emoji:'🎠'},
+  {id:15,name:'Wonderpark Café',city:'Amstelveen',province:'Noord-Holland',lat:52.3105,lng:4.8572,stijl:['speelcafe'],ages:['0-2','3-5'],priceFrom:4,priceNote:'Entree v.a. €4',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Binnenspeeltuin voor de kleintjes. Rustige sfeer.',emoji:'✨'},
+  {id:16,name:"Familie Café 't Nestje",city:'Zoetermeer',province:'Zuid-Holland',lat:52.0538,lng:4.4927,stijl:['speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:3,priceNote:'Kleine entree, consumpties',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Café én kids concept store in één. Ontbijt, lunch, high tea plus speelhoek.',emoji:'🪺'},
+  {id:20,name:"Speelboerderij 't Hoefijzer",city:'Baarn',province:'Utrecht',lat:52.2108,lng:5.2877,stijl:['boerderij','rustig'],ages:['0-2','3-5'],priceFrom:0,priceNote:'Gratis toegang, terras consumpties',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Rustieke boerderij met dieren en speelplaats. Heerlijk terras, koffie en taart.',emoji:'🐄'},
+  {id:21,name:'Speelboerderij Binky',city:'Apeldoorn',province:'Gelderland',lat:52.2215,lng:5.9694,stijl:['boerderij','actief'],ages:['3-5','6-9','10-12'],priceFrom:8,priceNote:'Entree v.a. €8',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Dieren, speelweide, klimparcours, verkeerspark, minigolf. Terras voor ouders.',emoji:'🐑'},
+  {id:22,name:'De Roosendaal',city:'Putten',province:'Gelderland',lat:52.262,lng:5.601,stijl:['boerderij','rustig'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Gratis, kantine aanwezig',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speelboerderij met trekkers, avonturenpad en veel dieren.',emoji:'🚜'},
+  {id:23,name:'De Drentse Koe',city:'Zuidlaren',province:'Drenthe',lat:53.088,lng:6.683,stijl:['boerderij','actief'],ages:['3-5','6-9','10-12'],priceFrom:7,priceNote:'Entree v.a. €7',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'ANWB genomineerd. Trampolinespringen, disco, bouwen, skelteren.',emoji:'🥁'},
+  {id:24,name:'Avonturenboerderij Molenwaard',city:'Streefkerk',province:'Zuid-Holland',lat:51.844,lng:4.749,stijl:['boerderij','actief'],ages:['3-5','6-9'],priceFrom:10,priceNote:'Dagkaart v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:"Fien en Teun nemen je mee. Pony's, trekkers, dieren aaien en parkshows.",emoji:'🌾'},
+  {id:25,name:'Geertjes Hoeve',city:'Zoeterwoude',province:'Zuid-Holland',lat:52.102,lng:4.478,stijl:['boerderij','rustig'],ages:['0-2','3-5'],priceFrom:0,priceNote:'Gratis toegang, voer kopen',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:"Geitenboerderij. Geiten voeren, pony's borstelen, konijnen aaien.",emoji:'🐐'},
+  {id:26,name:'Kinderboerderij Elsenhove',city:'Amstelveen',province:'Noord-Holland',lat:52.299,lng:4.86,stijl:['boerderij','rustig'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Gratis, kantine aanwezig',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Kinderboerderij met speeltuin. Kleine kantine.',emoji:'🐇'},
+  {id:27,name:'Speelboerderij Dondertman',city:'Holten',province:'Overijssel',lat:52.278,lng:6.426,stijl:['boerderij','actief'],ages:['3-5','6-9','10-12'],priceFrom:6,priceNote:'Entree €6 v.a. 2 jaar',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Zilveren ANWB-award 2024. Alpaca\'s, geiten, skelterbaan en knuffelhuis.',emoji:'🦙'},
+  {id:28,name:'Dorpsboerderij de Brink',city:'Groningen',province:'Groningen',lat:53.2194,lng:6.5665,stijl:['boerderij','rustig'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Gratis, horeca aanwezig',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Buitenkeuken met zand, schommelen, dieren bekijken.',emoji:'🏡'},
+  {id:29,name:'De Naturij',city:'Drachten',province:'Friesland',lat:53.11,lng:6.1,stijl:['boerderij','natuur','actief'],ages:['0-2','3-5','6-9','10-12'],priceFrom:5.95,priceNote:'€5,95 vanaf 2 jaar',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Kinderboerderij + indoor speelhal + speelbos + kabouterpad.',emoji:'🌿'},
+  {id:30,name:"Kinderspeelboerderij 't Bukske",city:'Valkenburg',province:'Limburg',lat:50.865,lng:5.827,stijl:['boerderij','actief'],ages:['3-5','6-9'],priceFrom:5,priceNote:'Entree v.a. €5',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speeltuin, dieren aaien én skelterbaan. Terras voor ontspanning.',emoji:'🛷'},
+  {id:31,name:'Molen de Jonge Johannes',city:'Serooskerke',province:'Zeeland',lat:51.577,lng:3.596,stijl:['boerderij','actief'],ages:['3-5','6-9','10-12'],priceFrom:5,priceNote:'Entree v.a. €5',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speelboerderij met restaurant en terras, speeltuin, maïsdoolhof en minigolf.',emoji:'🌾'},
+  {id:32,name:"Klok'uus",city:"'s-Heer Arendskerke",province:'Zeeland',lat:51.495,lng:3.81,stijl:['boerderij','actief'],ages:['3-5','6-9','10-12'],priceFrom:7,priceNote:'Entree v.a. €7',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speelweide, binnenspeeltuin, touwenparcours en restaurant met terras.',emoji:'🏕️'},
+  {id:33,name:'Pannenkoekenrestaurant Dennenlucht',city:'Breda',province:'Noord-Brabant',lat:51.585,lng:4.74,stijl:['boerderij','rustig'],ages:['0-2','3-5','6-9','10-12'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Mastbos met groot terras en nostalgische buitenspeeltuin. Heerlijke pannenkoeken.',emoji:'🥞'},
+  {id:34,name:'Koeckers Pannenkoekenboerderij',city:'Zundert',province:'Noord-Brabant',lat:51.46,lng:4.66,stijl:['boerderij','rustig'],ages:['0-2','3-5','6-9','10-12'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Magische themaruimtes: Heksenkeuken, Botenhuys en Koningskamer.',emoji:'🧙'},
+  {id:40,name:'Monkey Town Amsterdam',city:'Amsterdam',province:'Noord-Holland',lat:52.4,lng:4.93,stijl:['actief'],ages:['3-5','6-9','10-12'],priceFrom:10.95,priceNote:'€10,95 kind, ouders gratis',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({speelzone:true}),description:'Groot indoor speelparadijs. Trampolines, klimmen, glijbanen.',emoji:'🐒'},
+  {id:41,name:'Monkey Town Maarssen',city:'Maarssen',province:'Utrecht',lat:52.13,lng:5.04,stijl:['actief'],ages:['3-5','6-9','10-12'],priceFrom:10.95,priceNote:'€10,95 kind, ouders gratis',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({speelzone:true}),description:'Indoor speeltuin vlakbij Utrecht.',emoji:'🤸'},
+  {id:42,name:'Bounce Valley Delft',city:'Delft',province:'Zuid-Holland',lat:52.005,lng:4.357,stijl:['actief'],ages:['3-5','6-9','10-12'],priceFrom:12,priceNote:'Vanaf €12',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({speelzone:true}),description:'Luchtkussenpark vol obstakels, glijbanen en nettenparcours.',emoji:'🎈'},
+  {id:43,name:'Speelpark Hoge Boekel',city:'Enschede',province:'Overijssel',lat:52.2215,lng:6.896,stijl:['actief'],ages:['3-5','6-9','10-12'],priceFrom:10,priceNote:'Dagkaart v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Speelpark met attracties, gedeeltelijk overdekt. Terras voor ouders.',emoji:'🎡'},
+  {id:44,name:'De Julianatoren',city:'Apeldoorn',province:'Gelderland',lat:52.2312,lng:5.9541,stijl:['actief'],ages:['3-5','6-9','10-12'],priceFrom:14,priceNote:'Entree v.a. €14',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Combinatie speeltuin en klein pretpark in bos. Overzichtelijk voor kleine kinderen.',emoji:'🎠'},
+  {id:50,name:'Soesterduinen',city:'Soest',province:'Utrecht',lat:52.19,lng:5.27,stijl:['natuur','actief'],ages:['3-5','6-9','10-12'],priceFrom:0,priceNote:'Gratis toegang',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP({etenDrinken:false}),description:'Uitgestrekte duinen. Kinderen klauteren en ontdekken.',emoji:'🏜️'},
+  {id:51,name:'De Vondeltuin',city:'Amsterdam',province:'Noord-Holland',lat:52.3606,lng:4.87,stijl:['natuur','rustig','speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:0,priceNote:'Gratis, terras',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Groot zandbak en klimrek in het Vondelpark. Jij in een ligstoel met koffie.',emoji:'🌳'},
+  {id:52,name:'De Vergulden Eenhoorn',city:'Amsterdam',province:'Noord-Holland',lat:52.345,lng:4.935,stijl:['natuur','rustig'],ages:['3-5','6-9','10-12'],priceFrom:0,priceNote:'Gratis, eten/drinken betalen',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Ommuurde binnenplaats. Kinderen rennen, jij met een glas wijn onder de bomen.',emoji:'🦄'},
+  {id:53,name:'Landgoed De Olmenhorst',city:'Lisserbroek',province:'Noord-Holland',lat:52.253,lng:4.572,stijl:['restaurant','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:12,priceNote:'Biologisch eten v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Eten tussen de fruitbomen. Speeltuin. Herfst: zelf appels plukken.',emoji:'🍎'},
+  {id:60,name:'DierenPark Amersfoort',city:'Amersfoort',province:'Utrecht',lat:52.1561,lng:5.3878,stijl:['dierentuin','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:26.5,priceNote:'Kind €26,50 · Volwassene €29,50',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:'Klimmen, klauteren en glijden tussen girafjes en tijgers.',emoji:'🦒'},
+  {id:61,name:'ARTIS Amsterdam',city:'Amsterdam',province:'Noord-Holland',lat:52.366,lng:4.916,stijl:['dierentuin','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:26.5,priceNote:'Kind €26,50 · Volwassene €29,50',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true,rustigeSfeer:true}),description:'Historische dierentuin in hartje Amsterdam. Olifanten, giraffen, Planetarium.',emoji:'🦁'},
+  {id:62,name:'Diergaarde Blijdorp',city:'Rotterdam',province:'Zuid-Holland',lat:51.927,lng:4.429,stijl:['dierentuin','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:25,priceNote:'Kind €25 · Volwassene €27',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:"Rivièrahal, Oceanium, gorilla's en rijksmonumenten.",emoji:'🦏'},
+  {id:63,name:"Koninklijke Burgers' Zoo",city:'Arnhem',province:'Gelderland',lat:51.99,lng:5.89,stijl:['dierentuin','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:25,priceNote:'Kind €25 · Volwassene €29',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true,rustigeSfeer:true}),description:'Grootste dierentuin NL. Bush, Safari, Desert, Ocean en Mangrove biomen.',emoji:'🌴'},
+  {id:64,name:'Apenheul',city:'Apeldoorn',province:'Gelderland',lat:52.2077,lng:5.918,stijl:['dierentuin','natuur'],ages:['3-5','6-9','10-12'],priceFrom:24,priceNote:'Kind €24 · Volwassene €27',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:'Apen lopen vrij tussen de bezoekers. 33 soorten in een bospark.',emoji:'🐒'},
+  {id:65,name:'Ouwehands Dierenpark',city:'Rhenen',province:'Utrecht',lat:51.964,lng:5.573,stijl:['dierentuin','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:24,priceNote:'Kind €24 · Volwassene €27',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:"Pandasia met reuzenpanda's. Enige in NL.",emoji:'🐼'},
+  {id:66,name:'Safaripark Beekse Bergen',city:'Hilvarenbeek',province:'Noord-Brabant',lat:51.4867,lng:5.139,stijl:['dierentuin','natuur'],ages:['3-5','6-9','10-12'],priceFrom:25,priceNote:'Kind €25 · Volwassene €28',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:'Safari vanuit eigen auto of boot. Leeuwen, neushoorns, giraffen.',emoji:'🦓'},
+  {id:67,name:'WILDLANDS Adventure Zoo',city:'Emmen',province:'Drenthe',lat:52.78,lng:6.913,stijl:['dierentuin','natuur'],ages:['3-5','6-9','10-12'],priceFrom:25,priceNote:'Kind €25 · Volwassene €27',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:'Jungola, Nortica en Serenga themagebieden.',emoji:'🌿'},
+  {id:68,name:'GaiaZOO',city:'Kerkrade',province:'Limburg',lat:50.877,lng:6.055,stijl:['dierentuin','natuur'],ages:['3-5','6-9','10-12'],priceFrom:22,priceNote:'Kind €22 · Volwassene €25',ouderproof:false,status:'approved',submittedBy:'admin',ouderproofFeatures:NOP({zitplaatsen:true,etenDrinken:true}),description:"Gorilla's, ijsberen, olifanten en vlinders.",emoji:'🦍'},
+  {id:80,name:'Pannekoekenhuis De Kabouterhut',city:'Amersfoort',province:'Utrecht',lat:52.1561,lng:5.3878,stijl:['restaurant','rustig'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Klassiek pannenkoekenhuis. Ballenbak, buitenspeeltuin en gratis schminken.',emoji:'🧙‍♂️'},
+  {id:81,name:'De Gillende Keukenmeid',city:'Hoevelaken',province:'Gelderland',lat:52.1693,lng:5.4481,stijl:['restaurant','rustig'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP({speelzolder:true}),description:'Vrolijk kindvriendelijk pannenkoekenhuis. Speelkelder voor kids, ouders genieten boven.',emoji:'🥞'},
+  {id:82,name:'Pannenkoekenboerderij De Hakhorst',city:'Leusden',province:'Utrecht',lat:52.129,lng:5.431,stijl:['restaurant','boerderij'],ages:['0-2','3-5','6-9','10-12'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Pannenkoeken op een echte boerderij. Kinderen versieren hun eigen pannenkoek.',emoji:'🌻'},
+  {id:83,name:'Pannenkoekhuis Bergzicht',city:'Woudenberg',province:'Utrecht',lat:52.078,lng:5.42,stijl:['restaurant','natuur'],ages:['3-5','6-9','10-12'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Op landgoed Den Treek Henschoten. Speeltuin en speelkamer.',emoji:'🌲'},
+  {id:84,name:'Pannenkoekenhuis Schaffelaar',city:'Barneveld',province:'Gelderland',lat:52.1375,lng:5.588,stijl:['restaurant','natuur'],ages:['3-5','6-9','10-12'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Aan het Schaffelaarsebos. Speelkamer met voetbaltafel en buitenspeeltuin.',emoji:'🏰'},
+  {id:85,name:'Het Kabouterwoud',city:'Zuidwolde',province:'Drenthe',lat:52.666,lng:6.416,stijl:['restaurant','rustig'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP({speelzolder:true}),description:'Kabouter-themarestaurant. Speelruimte bijna even groot als het restaurant.',emoji:'🍄'},
+  {id:86,name:"'T Boshuys",city:'Tilburg',province:'Noord-Brabant',lat:51.562,lng:5.073,stijl:['restaurant','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:12,priceNote:'Eten v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Brasserie in het bos met kabouterpad. Buitenspeeltuin én speelhoek binnen.',emoji:'🌿'},
+  {id:87,name:'Jozef Eten & Drinken',city:'Utrecht',province:'Utrecht',lat:52.0907,lng:5.125,stijl:['restaurant','speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Lunch v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP({speelzolder:true}),description:'Groot centrum-restaurant met afgeschermde speelkamer. Koffie, lunch, borrel én diner.',emoji:'🏛️'},
+  {id:88,name:'Buurten in de Fabriek',city:'Utrecht',province:'Utrecht',lat:52.082,lng:5.105,stijl:['restaurant','speelcafe'],ages:['0-2','3-5','6-9'],priceFrom:9,priceNote:'Lunch v.a. €9',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP({speelzolder:true}),description:'Speelkamer met keukentjes en glijbaan. Lunchen, borrelen of dineren.',emoji:'🏭'},
+  {id:89,name:'De Moestuin',city:'Utrecht',province:'Utrecht',lat:52.08,lng:5.14,stijl:['restaurant','natuur'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Biologisch eten v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Biologisch restaurant met grote tuin: speeltuin, zandbak en waterspeeltuin.',emoji:'🥕'},
+  {id:90,name:'Grand Café Groeneveld',city:'Baarn',province:'Utrecht',lat:52.222,lng:5.28,stijl:['restaurant','natuur'],ages:['3-5','6-9','10-12'],priceFrom:12,priceNote:'Lunch/diner v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Parkrestaurant op Kasteel Groeneveld. Speelhoek, buitenspeeltuin en winterse speelkelder.',emoji:'🏯'},
+  {id:91,name:'De Bolle Buik',city:'Heerhugowaard',province:'Noord-Holland',lat:52.668,lng:4.833,stijl:['restaurant','actief'],ages:['3-5','6-9','10-12'],priceFrom:11,priceNote:'v.a. €11',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Pannenkoekenhuis met 20+ speeltoestellen, minigolf én pierenbadje.',emoji:'🍔'},
+  {id:92,name:'De IJ-Kantine',city:'Amsterdam',province:'Noord-Holland',lat:52.384,lng:4.906,stijl:['restaurant','rustig'],ages:['0-2','3-5','6-9'],priceFrom:12,priceNote:'Lunch/diner v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Vrolijk ingericht aan het IJ. Kindertafeltjes, speelhoek én grote zandbak op terras.',emoji:'⚓'},
+  {id:93,name:'WOODZ Restaurant',city:'Rheden',province:'Gelderland',lat:51.999,lng:6.05,stijl:['restaurant','natuur'],ages:['3-5','6-9','10-12'],priceFrom:14,priceNote:'Diner v.a. €14',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Boscafé in zeecontainer op Buitenplaats Beekhuizen. 3 speeltuinen naast het terras.',emoji:'🌳'},
+  {id:94,name:'La Fontaine',city:'Joure',province:'Friesland',lat:52.968,lng:5.79,stijl:['restaurant','rustig'],ages:['0-2','3-5','6-9','10-12'],priceFrom:11,priceNote:'Eten v.a. €11',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'50m² speelhoek — 40 kinderen tegelijk. Uitgebreide menukaart.',emoji:'⛲'},
+  {id:95,name:'Brasserie De Jagerstee',city:'Elburg',province:'Gelderland',lat:52.449,lng:5.834,stijl:['restaurant','natuur'],ages:['3-5','6-9','10-12'],priceFrom:12,priceNote:'Eten v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Aan de rand van de Veluwe. Buitenspeeltuin met springkussen voor de deur.',emoji:'🦌'},
+  {id:96,name:'Paviljoen Salt',city:'Terherne',province:'Friesland',lat:52.99,lng:5.74,stijl:['restaurant','natuur'],ages:['3-5','6-9','10-12'],priceFrom:12,priceNote:'Eten v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Strandtent aan de Zoutepoel met omheinde speeltuin en airtrampoline.',emoji:'⛵'},
+  {id:97,name:'Beachclub Kaap Hoorn',city:'Haren',province:'Groningen',lat:53.172,lng:6.616,stijl:['restaurant','natuur'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Eten v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Strandtent aan het Hoornsemeer. Speelhoek binnen, kindermenu.',emoji:'🏖️'},
+  {id:98,name:'Familierestaurant De Houtzagerij',city:'Otterlo',province:'Gelderland',lat:52.0956,lng:5.772,stijl:['restaurant','natuur'],ages:['0-2','3-5','6-9','10-12'],priceFrom:12,priceNote:'Eten v.a. €12',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Vlak bij de Hoge Veluwe. 3 buitenspeeltuinen waaronder bosspeeltuin.',emoji:'🪓'},
+  {id:99,name:'Pannenkoekenboerderij De Kabouter',city:'Schijndel',province:'Noord-Brabant',lat:51.62,lng:5.436,stijl:['restaurant','boerderij'],ages:['0-2','3-5','6-9'],priceFrom:10,priceNote:'Pannenkoeken v.a. €10',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Pannenkoekenboerderij met speeltuin buiten en speelruimte binnen.',emoji:'🧚'},
+  {id:100,name:'Plaswijckpark',city:'Rotterdam',province:'Zuid-Holland',lat:51.95,lng:4.52,stijl:['dierentuin','actief'],ages:['0-2','3-5','6-9'],priceFrom:12,priceNote:'Kind €12 · Volwassene €13',ouderproof:true,status:'approved',submittedBy:'admin',ouderproofFeatures:OP(),description:'Familiepark met dieren, speeltuinen en attracties. Rustig en overzichtelijk.',emoji:'🎡'},
+];
+
+// State
+let places = [...SEED];
+let favs = [];
+let currentTab = 'discover';
+let filtersOpen = false;
+let selStijl = [];
+let selBudget = [];
+let selAges = [];
+let opOnly = false;
+let userPos = null;
+let currentDetail = null;
+let adminTabState = 'pending';
+let isBusiness = false;
+let formOpOn = false;
+let formOpFeatures = {};
+let formStijl = [];
+let formAges = [];
+
+// Load favs from localStorage
+try {
+  const f = localStorage.getItem('op_favs');
+  if (f) favs = JSON.parse(f);
+  const p = localStorage.getItem('op_pending');
+  if (p) {
+    const arr = JSON.parse(p);
+    if (arr && arr.length > 0) places = [...SEED, ...arr];
+  }
+} catch(e){}
+
+function saveFavs() {
+  try { localStorage.setItem('op_favs', JSON.stringify(favs)); } catch(e){}
+}
+function savePending() {
+  try {
+    const pending = places.filter(p => !SEED.find(s => s.id === p.id));
+    localStorage.setItem('op_pending', JSON.stringify(pending));
+  } catch(e){}
+}
+
+// GPS
+navigator.geolocation && navigator.geolocation.getCurrentPosition(
+  p => {
+    userPos = {lat: p.coords.latitude, lng: p.coords.longitude};
+    document.getElementById('locSub').textContent = '📍 Op afstand gesorteerd';
+    render();
+  },
+  () => {}
+);
+
+function haversine(lat1,lng1,lat2,lng2) {
+  const R=6371,dL=((lat2-lat1)*Math.PI)/180,dN=((lng2-lng1)*Math.PI)/180;
+  const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dN/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function getPlacesWithDist() {
+  return places.map(p => ({
+    ...p,
+    distance: userPos ? parseFloat(haversine(userPos.lat,userPos.lng,p.lat,p.lng).toFixed(1)) : null
+  }));
+}
+
+function opScoreF(f) { return Object.values(f).filter(Boolean).length; }
+
+// Build pills
+function buildPills() {
+  const bar = document.getElementById('pillBar');
+  let html = `<button class="pill ${opOnly?'on':''}" style="background:${opOnly?'#1a3c2e':'white'};color:${opOnly?'white':'#1a3c2e'};border-color:#1a3c2e;font-weight:bold" onclick="toggleOpOnly()">✅ Ouderproof</button>`;
+  Object.entries(STIJL).forEach(([key,s]) => {
+    const on = selStijl.includes(key);
+    html += `<button class="pill ${on?'on':''}" style="background:${on?s.c:'white'};border-color:${on?'#555':'#ddd'};font-weight:${on?'bold':'normal'}" onclick="toggleStijl('${key}')">${s.i} ${s.l}</button>`;
+  });
+  bar.innerHTML = html;
+}
+
+function buildFilterChips() {
+  // Budget
+  let bhtml = '';
+  BUDGET_TIERS.forEach(t => {
+    const on = selBudget.includes(t.key);
+    bhtml += `<button class="chip ${on?'on':''}" style="${on?'background:'+t.color+';border-color:#2d6a4f':''}" onclick="toggleBudget('${t.key}')">${t.icon} ${t.label}</button>`;
+  });
+  document.getElementById('budgetChips').innerHTML = bhtml;
+
+  // Age
+  let ahtml = '';
+  AGE_OPT.forEach(a => {
+    const on = selAges.includes(a);
+    ahtml += `<button class="chip ${on?'on':''}" onclick="toggleAge('${a}')">${AGE_LBL[a]}</button>`;
+  });
+  document.getElementById('ageChips').innerHTML = ahtml;
+}
+
+function toggleOpOnly() { opOnly = !opOnly; render(); }
+function toggleStijl(s) {
+  selStijl = selStijl.includes(s) ? selStijl.filter(x=>x!==s) : [...selStijl, s];
+  render();
+}
+function toggleBudget(k) {
+  selBudget = selBudget.includes(k) ? selBudget.filter(x=>x!==k) : [...selBudget, k];
+  render();
+}
+function toggleAge(a) {
+  selAges = selAges.includes(a) ? selAges.filter(x=>x!==a) : [...selAges, a];
+  render();
+}
+function clearFilters() {
+  opOnly=false; selStijl=[]; selBudget=[]; selAges=[];
+  document.getElementById('searchInput').value = '';
+  render();
+}
+function toggleFilters() {
+  filtersOpen = !filtersOpen;
+  document.getElementById('filterPanel').style.display = filtersOpen ? 'block' : 'none';
+  const n = selAges.length+selBudget.length+(opOnly?1:0);
+  document.getElementById('filterBtn').textContent = n>0 ? `(${n}) Filters` : 'Filters';
+  document.getElementById('filterBtn').className = 'smbtn' + (n>0?' on':'');
+  buildFilterChips();
+}
+function switchTab(t) {
+  currentTab = t;
+  document.getElementById('tabDiscover').className = 'tab'+(t==='discover'?' on':'');
+  document.getElementById('tabFav').className = 'tab'+(t==='favorites'?' on':'');
+  render();
+}
+
+function render() {
+  buildPills();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const sortBy = document.getElementById('sortSel').value;
+  const all = getPlacesWithDist().filter(p => p.status === 'approved');
+  
+  let list;
+  if (currentTab === 'favorites') {
+    list = all.filter(p => favs.includes(p.id));
+  } else {
+    list = all.filter(p => {
+      if (opOnly && !p.ouderproof) return false;
+      if (selAges.length && !selAges.some(a => p.ages.includes(a))) return false;
+      if (selStijl.length && !selStijl.some(s => p.stijl.includes(s))) return false;
+      if (selBudget.length && !selBudget.includes(bk(p.priceFrom))) return false;
+      if (search && !p.name.toLowerCase().includes(search) && !p.city.toLowerCase().includes(search) && !p.province.toLowerCase().includes(search)) return false;
+      return true;
+    });
+  }
+
+  list.sort((a,b) => {
+    if (sortBy==='distance' && a.distance!==null) return a.distance-b.distance;
+    if (sortBy==='ouderproof') return opScoreF(b.ouderproofFeatures)-opScoreF(a.ouderproofFeatures);
+    if (sortBy==='prijs') return a.priceFrom-b.priceFrom;
+    return a.name.localeCompare(b.name);
+  });
+
+  // Update fav badge
+  const fc = favs.length;
+  document.getElementById('tabFav').innerHTML = 'Favorieten' + (fc>0?` <span class="badge">${fc}</span>`:'');
+
+  const approved = all.length;
+  document.getElementById('countTxt').textContent = currentTab==='favorites'
+    ? `${list.length} favorieten`
+    : `${list.length} van ${approved} plekken`;
+
+  let html = '';
+  if (list.length === 0) {
+    html = '<div class="empty"><div style="font-size:48px">🔍</div><p style="color:#888;margin-top:8px">Geen plekken gevonden</p><p style="color:#bbb;font-size:13px">Pas filters aan</p></div>';
+  } else {
+    list.forEach(p => {
+      const bt = getBT(p);
+      const isFav = favs.includes(p.id);
+      const opIcons = p.ouderproof ? OP_FEATURES.map(f => `<span style="opacity:${p.ouderproofFeatures[f.key]?1:0.2}">${f.icon}</span>`).join('') : '';
+      const stijlTags = p.stijl.slice(0,2).map(s => `<span class="stag" style="background:${STIJL[s]?STIJL[s].c:'#eee'}">${STIJL[s]?STIJL[s].i:''} ${STIJL[s]?STIJL[s].l:s}</span>`).join('');
+      html += `<div class="card" onclick="showDetail(${p.id})">
+        <div class="thumb" style="background:${p.ouderproof?'linear-gradient(135deg,#d1fae5,#a7f3d0)':'#f3f4f6'}">${p.emoji||'📍'}</div>
+        <div class="cbody">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;margin-bottom:1px">
+            <span class="cname">${p.name}</span>${p.ouderproof?'<span class="optag">OP ✅</span>':''}
+          </div>
+          <p class="ccity">📍 ${p.city}${p.distance!==null?' · '+p.distance+' km':''}</p>
+          ${p.ouderproof?`<div class="opicons">${opIcons}</div>`:''}
+          <div class="tags">
+            <span class="btag" style="background:${bt.color}">${bt.icon} ${p.priceFrom===0?'Gratis':'v.a. €'+p.priceFrom}</span>
+            ${stijlTags}
+          </div>
+        </div>
+        <button class="favbtn" onclick="event.stopPropagation();toggleFav(${p.id})">${isFav?'❤️':'🤍'}</button>
+      </div>`;
+    });
+  }
+  document.getElementById('placeList').innerHTML = html;
+}
+
+function toggleFav(id) {
+  favs = favs.includes(id) ? favs.filter(f=>f!==id) : [...favs, id];
+  saveFavs();
+  render();
+  if (currentDetail && currentDetail.id === id) {
+    document.getElementById('detailFavBtn').textContent = favs.includes(id) ? '❤️' : '🤍';
+  }
+}
+
+function showDetail(id) {
+  const all = getPlacesWithDist();
+  const p = all.find(x => x.id === id);
+  if (!p) return;
+  currentDetail = p;
+  const bt = getBT(p);
+  const heroColor = p.ouderproof ? 'linear-gradient(160deg,#134e35,#2d6a4f 60%,#52b788)' : 'linear-gradient(160deg,#374151,#6b7280)';
+  document.getElementById('detailHero').style.background = heroColor;
+  document.getElementById('detailHero').innerHTML = `
+    <div style="font-size:52px">${p.emoji||'📍'}</div>
+    <h2>${p.name}</h2>
+    <p>📍 ${p.city}, ${p.province}${p.distance!==null?' · '+p.distance+' km':''}</p>
+    <span class="btag" style="background:${bt.color};font-size:13px;padding:4px 12px">${bt.icon} ${p.priceFrom===0?'Gratis':p.priceNote}</span>`;
+  
+  let bodyHtml = '';
+  if (p.ouderproof) {
+    let featureGrid = OP_FEATURES.map(f => `
+      <div class="opitem" style="background:${p.ouderproofFeatures[f.key]?'white':'#f9f9f9'};opacity:${p.ouderproofFeatures[f.key]?1:0.35};border:1px solid ${p.ouderproofFeatures[f.key]?'#86efac':'#eee'}">
+        <span style="font-size:15px">${f.icon}</span>
+        <span style="font-size:11px;color:#333;flex:1">${f.label}</span>
+        ${p.ouderproofFeatures[f.key]?'<span style="color:#2d6a4f;font-size:11px">✓</span>':''}
+      </div>`).join('');
+    bodyHtml += `<div class="opcard"><p class="opcard-title">⭐ Ouderproof — jij kunt hier écht ontspannen</p><div class="opgrid">${featureGrid}</div></div>`;
+  }
+  bodyHtml += `<p class="desc">${p.description}</p>`;
+  bodyHtml += `<span class="slabel">Leeftijd</span><div class="tags" style="margin-bottom:12px">${p.ages.map(a=>`<span class="atag">${AGE_LBL[a]}</span>`).join('')}</div>`;
+  bodyHtml += `<span class="slabel">Stijl</span><div class="tags" style="margin-bottom:12px">${p.stijl.map(s=>`<span class="stag" style="background:${STIJL[s]?STIJL[s].c:'#eee'};font-size:13px;padding:4px 10px">${STIJL[s]?STIJL[s].i:''} ${STIJL[s]?STIJL[s].l:s}</span>`).join('')}</div>`;
+  bodyHtml += `<div class="pricebox"><p class="opcard-title" style="color:#555">💰 Prijs</p><p style="font-size:14px;color:#444;margin:0">${p.priceNote||'Zie website voor actuele prijzen'}</p></div>`;
+  
+  document.getElementById('detailBody').innerHTML = bodyHtml;
+  document.getElementById('detailFavBtn').textContent = favs.includes(p.id) ? '❤️' : '🤍';
+  document.getElementById('detailScreen').style.display = 'block';
+}
+
+function closeDetail() {
+  document.getElementById('detailScreen').style.display = 'none';
+  currentDetail = null;
+}
+
+function toggleDetailFav() {
+  if (currentDetail) toggleFav(currentDetail.id);
+}
+
+// Suggest
+function showSuggest(biz) {
+  isBusiness = biz;
+  formOpOn = false;
+  formOpFeatures = {};
+  formStijl = [];
+  formAges = [];
+  document.getElementById('suggestTitle').textContent = biz ? 'Bedrijf aanmelden' : 'Plek toevoegen';
+  document.getElementById('bizBanner').style.display = biz ? 'block' : 'none';
+  document.getElementById('bizFields').style.display = biz ? 'block' : 'none';
+  document.getElementById('fOpBtn').className = 'bigchip';
+  document.getElementById('fOpFeatures').style.display = 'none';
+  
+  // Build stijl chips
+  let sh = '';
+  Object.entries(STIJL).forEach(([k,s]) => {
+    sh += `<button class="chip" id="fsc_${k}" onclick="toggleFormStijl('${k}')">${s.i} ${s.l}</button>`;
+  });
+  document.getElementById('fStijlChips').innerHTML = sh;
+  
+  // Build age chips
+  let ah = '';
+  AGE_OPT.forEach(a => {
+    ah += `<button class="chip" id="fac_${a.replace('-','_')}" onclick="toggleFormAge('${a}')">${AGE_LBL[a]}</button>`;
+  });
+  document.getElementById('fAgeChips').innerHTML = ah;
+  
+  // Build op features
+  let oh = '';
+  OP_FEATURES.forEach(f => {
+    oh += `<button class="bigchip" id="fof_${f.key}" onclick="toggleFormOpFeature('${f.key}')">${f.icon} ${f.label}</button>`;
+  });
+  document.getElementById('fOpFeatures').innerHTML = oh;
+  
+  // Clear inputs
+  ['fName','fCity','fProvince','fDesc','fPriceNote','fContactName','fContactEmail','fContactPhone'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('fEmoji').value = '📍';
+  document.getElementById('fPrice').value = '0';
+  
+  document.getElementById('suggestScreen').style.display = 'block';
+}
+
+function closeSuggest() {
+  document.getElementById('suggestScreen').style.display = 'none';
+}
+
+function toggleFormStijl(k) {
+  formStijl = formStijl.includes(k) ? formStijl.filter(x=>x!==k) : [...formStijl, k];
+  const btn = document.getElementById('fsc_'+k);
+  if (btn) btn.className = 'chip' + (formStijl.includes(k)?' on':'');
+}
+
+function toggleFormAge(a) {
+  formAges = formAges.includes(a) ? formAges.filter(x=>x!==a) : [...formAges, a];
+  const btn = document.getElementById('fac_'+a.replace('-','_'));
+  if (btn) btn.className = 'chip' + (formAges.includes(a)?' on':'');
+}
+
+function toggleFormOp() {
+  formOpOn = !formOpOn;
+  document.getElementById('fOpBtn').className = 'bigchip' + (formOpOn?' on':'');
+  document.getElementById('fOpFeatures').style.display = formOpOn ? 'block' : 'none';
+}
+
+function toggleFormOpFeature(k) {
+  formOpFeatures[k] = !formOpFeatures[k];
+  const btn = document.getElementById('fof_'+k);
+  if (btn) btn.className = 'bigchip' + (formOpFeatures[k]?' on':'');
+}
+
+function submitSuggest() {
+  const name = document.getElementById('fName').value.trim();
+  const city = document.getElementById('fCity').value.trim();
+  if (!name || !city) { alert('Vul naam en stad in.'); return; }
+  if (isBusiness) {
+    const cn = document.getElementById('fContactName').value.trim();
+    const ce = document.getElementById('fContactEmail').value.trim();
+    if (!cn || !ce) { alert('Vul contactnaam en e-mail in.'); return; }
+  }
+  const newPlace = {
+    id: Date.now(),
+    name, city,
+    province: document.getElementById('fProvince').value.trim(),
+    description: document.getElementById('fDesc').value.trim(),
+    emoji: document.getElementById('fEmoji').value.trim() || '📍',
+    priceFrom: parseFloat(document.getElementById('fPrice').value) || 0,
+    priceNote: document.getElementById('fPriceNote').value.trim(),
+    stijl: formStijl,
+    ages: formAges,
+    ouderproof: formOpOn,
+    ouderproofFeatures: {
+      speelzone: !!formOpFeatures.speelzone,
+      zitplaatsen: !!formOpFeatures.zitplaatsen,
+      etenDrinken: !!formOpFeatures.etenDrinken,
+      speelzolder: !!formOpFeatures.speelzolder,
+      rustigeSfeer: !!formOpFeatures.rustigeSfeer,
+    },
+    lat: 52.2, lng: 5.2,
+    status: 'pending',
+    submittedBy: isBusiness ? 'bedrijf:'+document.getElementById('fContactName').value.trim() : 'gebruiker',
+    contactEmail: isBusiness ? document.getElementById('fContactEmail').value.trim() : '',
+    contactPhone: isBusiness ? document.getElementById('fContactPhone').value.trim() : '',
+  };
+  places = [...places, newPlace];
+  savePending();
+  closeSuggest();
+  document.getElementById('thanksScreen').style.display = 'flex';
+}
+
+function closeThanks() {
+  document.getElementById('thanksScreen').style.display = 'none';
+  render();
+}
+
+// Admin
+function showAdmin() {
+  document.getElementById('adminLoginScreen').style.display = 'block';
+  document.getElementById('adminPwInput').value = '';
+  document.getElementById('adminErr').style.display = 'none';
+}
+function closeAdminLogin() {
+  document.getElementById('adminLoginScreen').style.display = 'none';
+}
+function doAdminLogin() {
+  const pw = document.getElementById('adminPwInput').value;
+  if (pw === ADMIN_PW) {
+    document.getElementById('adminLoginScreen').style.display = 'none';
+    openAdminScreen();
+  } else {
+    document.getElementById('adminErr').style.display = 'block';
+  }
+}
+function openAdminScreen() {
+  const pending = places.filter(p => p.status === 'pending');
+  const approved = places.filter(p => p.status === 'approved');
+  document.getElementById('adminTitle').textContent = `Beheer (${approved.length} actief)`;
+  document.getElementById('adminScreen').style.display = 'block';
+  renderAdminList();
+}
+function closeAdmin() {
+  document.getElementById('adminScreen').style.display = 'none';
+  render();
+}
+function adminTab(t) {
+  adminTabState = t;
+  document.getElementById('tabPending').className = 'chip'+(t==='pending'?' on':'');
+  document.getElementById('tabApproved').className = 'chip'+(t==='approved'?' on':'');
+  renderAdminList();
+}
+function renderAdminList() {
+  const list = places.filter(p => p.status === adminTabState);
+  let html = '';
+  if (list.length === 0) {
+    html = '<div class="empty"><p style="color:#bbb">Niets hier</p></div>';
+  } else {
+    list.forEach(p => {
+      const bizBadge = p.submittedBy && p.submittedBy.startsWith('bedrijf:')
+        ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:5px 8px;margin-top:4px"><p style="margin:0;font-size:11px;color:#92400e">🏢 ${p.submittedBy}${p.contactEmail?' · '+p.contactEmail:''}</p></div>` : '';
+      const approveBtn = adminTabState==='pending'
+        ? `<button class="approvebtn" onclick="adminApprove(${p.id})">✅ Goedkeuren</button>` : '';
+      html += `<div class="card" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <div style="display:flex;gap:10px;align-items:center;width:100%">
+          <span style="font-size:22px">${p.emoji||'📍'}</span>
+          <div style="flex:1"><p style="margin:0;font-weight:bold;font-size:13px">${p.name} — ${p.city}</p><p style="margin:0;font-size:11px;color:#888">${p.submittedBy} · ${p.priceFrom===0?'Gratis':'€'+p.priceFrom+'+'}</p></div>
+          ${p.ouderproof?'<span class="optag">OP✅</span>':''}
+        </div>
+        ${bizBadge}
+        <div style="display:flex;gap:6px;width:100%">
+          ${approveBtn}
+          <button class="dangerbtn" onclick="adminDelete(${p.id})">🗑 Verwijderen</button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('adminList').innerHTML = html;
+}
+function adminApprove(id) {
+  places = places.map(p => p.id===id ? {...p, status:'approved'} : p);
+  savePending();
+  renderAdminList();
+  const pending = places.filter(p => p.status === 'pending');
+  const approved = places.filter(p => p.status === 'approved');
+  document.getElementById('adminTitle').textContent = `Beheer (${approved.length} actief)`;
+}
+function adminDelete(id) {
+  if (!confirm('Zeker weten?')) return;
+  places = places.filter(p => p.id !== id);
+  savePending();
+  renderAdminList();
+}
+
+// Init
+render();
+</script>
+</body>
+</html>
